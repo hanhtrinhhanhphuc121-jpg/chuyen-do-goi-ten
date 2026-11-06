@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Remix Chuyến Đò Gọi Tên - Vòng Quay Học Sinh",
+  "description": "Trò chơi giáo dục Chuyến Đò Tri Thức Việt Nam - Gọi tên học sinh ngẫu nhiên, không lặp, giao diện 3D sinh động cho lớp học THPT và máy chiếu.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

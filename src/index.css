@@ -1,0 +1,426 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #0c4a6e;
+    color: #1e293b;
+    overflow-x: hidden;
+    user-select: none;
+  }
+}
+
+@keyframes boatFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-0.8deg);
+  }
+}
+
+@keyframes waterSway {
+  0%, 100% {
+    transform: translateX(0) scaleY(1);
+  }
+  50% {
+    transform: translateX(12px) scaleY(1.05);
+  }
+}
+
+@keyframes cloudDriftSlow {
+  0% {
+    transform: translateX(-10%);
+  }
+  50% {
+    transform: translateX(10%);
+  }
+  100% {
+    transform: translateX(-10%);
+  }
+}
+
+@keyframes goldShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes winnerCelebrate {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  45% {
+    transform: scale(1.08);
+  }
+  75% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes haloPulse {
+  0%, 100% {
+    box-shadow: 0 0 25px 8px rgba(251, 191, 36, 0.7), 0 0 60px 15px rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px 16px rgba(251, 191, 36, 0.9), 0 0 90px 30px rgba(245, 158, 11, 0.6);
+  }
+}
+
+.animate-boat-float {
+  animation: boatFloat 4.2s ease-in-out infinite;
+}
+
+.animate-water-sway {
+  animation: waterSway 5s ease-in-out infinite;
+}
+
+.animate-cloud-drift {
+  animation: cloudDriftSlow 35s ease-in-out infinite;
+}
+
+.animate-gold-shimmer {
+  background: linear-gradient(90deg, #fef08a 0%, #f59e0b 25%, #ffffff 50%, #f59e0b 75%, #fef08a 100%);
+  background-size: 200% auto;
+  animation: goldShimmer 3s linear infinite;
+}
+
+.animate-winner-celebrate {
+  animation: winnerCelebrate 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-halo-pulse {
+  animation: haloPulse 2s infinite ease-in-out;
+}
+
+@keyframes auraBreathe {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.65) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25) rotate(180deg);
+  }
+}
+
+@keyframes haloRotateSlow {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes rippleWave {
+  0% {
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-aura-breathe {
+  animation: auraBreathe 2.4s ease-in-out infinite;
+}
+
+.animate-star-twinkle {
+  animation: starTwinkle 1.8s ease-in-out infinite;
+}
+
+.animate-halo-rotate {
+  animation: haloRotateSlow 12s linear infinite;
+}
+
+.animate-ripple-wave {
+  animation: rippleWave 2.2s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+}
+
+/* --- STUDENT WAVING HAND ANIMATION --- */
+@keyframes handWaveCycle {
+  0% {
+    transform: scale(0) rotate(-20deg);
+    opacity: 0;
+  }
+  12% {
+    transform: scale(1.1) rotate(22deg);
+    opacity: 1;
+  }
+  24% {
+    transform: scale(1) rotate(-18deg);
+  }
+  36% {
+    transform: scale(1.05) rotate(22deg);
+  }
+  48% {
+    transform: scale(1) rotate(-16deg);
+  }
+  60% {
+    transform: scale(1.05) rotate(20deg);
+  }
+  72% {
+    transform: scale(1) rotate(-10deg);
+  }
+  84% {
+    transform: scale(1.02) rotate(15deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(5deg);
+    opacity: 0.95;
+  }
+}
+
+/* --- STUDENT JOYFUL BOUNCE & TILT --- */
+@keyframes studentJoyfulBounce {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(-2.5deg);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-3px) rotate(2.5deg);
+  }
+}
+
+/* --- TEACHER ROWING OAR STROKE --- */
+@keyframes oarRowingCycle {
+  0% {
+    transform: rotate(0deg) translate(0px, 0px);
+  }
+  25% {
+    transform: rotate(-3.5deg) translate(-2px, -3px);
+  }
+  55% {
+    transform: rotate(4deg) translate(3px, 4px);
+  }
+  80% {
+    transform: rotate(1deg) translate(1px, 2px);
+  }
+  100% {
+    transform: rotate(0deg) translate(0px, 0px);
+  }
+}
+
+/* --- TEACHER BODY SWAY --- */
+@keyframes teacherBodySway {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  35% {
+    transform: rotate(-1.2deg) translateY(-1.5px);
+  }
+  70% {
+    transform: rotate(1.2deg) translateY(1.5px);
+  }
+}
+
+/* --- WATER SPLASH RIPPLES --- */
+@keyframes waterSplashPulse {
+  0% {
+    transform: scale(0.3) rotate(0deg);
+    opacity: 0.9;
+  }
+  60% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.0) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+/* --- GENTLE BOAT BOBBING --- */
+@keyframes boatGentleBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3.5px) rotate(-0.35deg);
+  }
+}
+
+/* --- RIVER WATER SHIMMER --- */
+@keyframes riverWaveShimmer {
+  0%, 100% {
+    transform: translateX(0) scaleY(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateX(8px) scaleY(1.08);
+    opacity: 0.85;
+  }
+}
+
+.animate-hand-wave {
+  transform-origin: bottom center;
+  animation: handWaveCycle 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-student-bounce {
+  animation: studentJoyfulBounce 1.8s ease-in-out infinite;
+}
+
+.animate-oar-rowing {
+  transform-origin: 35% 25%;
+  animation: oarRowingCycle 2.8s ease-in-out infinite;
+}
+
+.animate-teacher-sway {
+  transform-origin: bottom center;
+  animation: teacherBodySway 2.8s ease-in-out infinite;
+}
+
+.animate-water-splash {
+  animation: waterSplashPulse 2.8s ease-out infinite;
+}
+
+.animate-boat-gentle-bob {
+  animation: boatGentleBob 4.8s ease-in-out infinite;
+}
+
+.animate-river-shimmer {
+  animation: riverWaveShimmer 4s ease-in-out infinite;
+}
+
+/* --- LIP SYNC SPEAKING MOUTH --- */
+@keyframes mouthLipSync {
+  0%, 100% {
+    transform: scaleY(0.35) scaleX(0.9);
+  }
+  25% {
+    transform: scaleY(1.3) scaleX(1.05);
+  }
+  50% {
+    transform: scaleY(0.55) scaleX(0.95);
+  }
+  75% {
+    transform: scaleY(1.15) scaleX(1);
+  }
+}
+
+/* --- STUDENT ARM RAISING & WAVING RIG --- */
+@keyframes studentArmRaiseAndWave {
+  0% {
+    transform: rotate(0deg) scale(0.9);
+    opacity: 0;
+  }
+  15% {
+    transform: rotate(-35deg) scale(1);
+    opacity: 1;
+  }
+  30% {
+    transform: rotate(25deg) scale(1.05);
+  }
+  45% {
+    transform: rotate(-30deg) scale(1);
+  }
+  60% {
+    transform: rotate(25deg) scale(1.05);
+  }
+  75% {
+    transform: rotate(-25deg) scale(1);
+  }
+  90% {
+    transform: rotate(20deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(5deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* --- TEACHER INVITING ARM GESTURE --- */
+@keyframes teacherInviteGesture {
+  0% {
+    transform: rotate(-25deg) scale(0.95);
+    opacity: 0.8;
+  }
+  40% {
+    transform: rotate(15deg) scale(1.03);
+    opacity: 1;
+  }
+  70% {
+    transform: rotate(10deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(12deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* --- EYE BLINK --- */
+@keyframes eyeBlinkQuick {
+  0%, 94%, 100% {
+    transform: scaleY(1);
+  }
+  97% {
+    transform: scaleY(0.1);
+  }
+}
+
+.animate-mouth-speak {
+  transform-origin: center;
+  animation: mouthLipSync 0.45s ease-in-out infinite;
+}
+
+.animate-student-wave-rig {
+  transform-origin: 20% 90%;
+  animation: studentArmRaiseAndWave 3.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-teacher-invite {
+  transform-origin: 20% 40%;
+  animation: teacherInviteGesture 1.2s cubic-bezier(0.2, 0.9, 0.4, 1) forwards;
+}
+
+.animate-eye-blink {
+  transform-origin: center;
+  animation: eyeBlinkQuick 4.5s ease-in-out infinite;
+}
+
+/* Custom scrollbars for clean teacher-friendly UI */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.6);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
