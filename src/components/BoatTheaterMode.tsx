@@ -77,43 +77,74 @@ export const BoatTheaterMode: React.FC<BoatTheaterModeProps> = ({
   // Sync browser fullscreen state
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsBrowserFullscreen(!!document.fullscreenElement);
+      const doc = document as any;
+      setIsBrowserFullscreen(!!(doc.fullscreenElement || doc.webkitFullscreenElement));
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
   }, []);
 
-  // Request browser fullscreen when opening theater mode
+  // Request browser fullscreen when opening theater mode (safe on iOS where requestFullscreen is undefined)
   useEffect(() => {
     if (isOpen) {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {
-          // If browser policy blocks auto-fullscreen, user can use toggle button
-        });
+      try {
+        const doc = document as any;
+        const docEl = document.documentElement as any;
+        const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement;
+        if (!fsEl) {
+          if (docEl.requestFullscreen) {
+            docEl.requestFullscreen().catch(() => {});
+          } else if (docEl.webkitRequestFullscreen) {
+            docEl.webkitRequestFullscreen();
+          }
+        }
+      } catch (e) {
+        // Safe on iOS
       }
     }
   }, [isOpen]);
 
   // Safe exit handler that restores window state and exits fullscreen
   const handleExitTheater = useCallback(async () => {
-    if (document.fullscreenElement) {
-      try {
-        await document.exitFullscreen();
-      } catch {
-        // safe fallback
+    try {
+      const doc = document as any;
+      const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement;
+      if (fsEl) {
+        if (doc.exitFullscreen) {
+          await doc.exitFullscreen().catch(() => {});
+        } else if (doc.webkitExitFullscreen) {
+          doc.webkitExitFullscreen();
+        }
       }
+    } catch {
+      // safe fallback
     }
     onClose();
   }, [onClose]);
 
-  // Toggle browser fullscreen manually
+  // Toggle browser fullscreen manually (safe on all mobile browsers)
   const handleToggleFullscreen = async () => {
     try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
+      const doc = document as any;
+      const docEl = document.documentElement as any;
+      const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement;
+      if (!fsEl) {
+        if (docEl.requestFullscreen) {
+          await docEl.requestFullscreen().catch(() => {});
+        } else if (docEl.webkitRequestFullscreen) {
+          docEl.webkitRequestFullscreen();
+        }
       } else {
-        await document.exitFullscreen();
+        if (doc.exitFullscreen) {
+          await doc.exitFullscreen().catch(() => {});
+        } else if (doc.webkitExitFullscreen) {
+          doc.webkitExitFullscreen();
+        }
       }
     } catch {
       // safe fallback

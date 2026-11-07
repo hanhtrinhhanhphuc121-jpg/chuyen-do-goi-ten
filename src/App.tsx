@@ -13,6 +13,7 @@ import { INITIAL_CLASSES, DEFAULT_SETTINGS } from './data/defaultData';
 import { ClassRoom, Student, CallHistoryItem, GameSettings, StudentPosition } from './types/game';
 import { soundEffects } from './utils/soundEffects';
 import { getAssetUrl, BOAT_ARTWORK_URL } from './utils/assets';
+import { safeStorage } from './utils/storage';
 import {
   getStoredStudentPositions,
   saveStoredStudentPositions,
@@ -33,7 +34,7 @@ export default function App() {
   // Load persisted classes or fallback
   const [classes, setClasses] = useState<ClassRoom[]>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.CLASSES);
+      const saved = safeStorage.getItem(STORAGE_KEYS.CLASSES);
       if (saved) return JSON.parse(saved);
     } catch {
       // fallback
@@ -44,7 +45,7 @@ export default function App() {
   // Current class ID
   const [currentClassId, setCurrentClassId] = useState<string>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.CURRENT_CLASS_ID);
+      const saved = safeStorage.getItem(STORAGE_KEYS.CURRENT_CLASS_ID);
       if (saved) return saved;
     } catch {
       // fallback
@@ -60,7 +61,7 @@ export default function App() {
   // Settings
   const [settings, setSettings] = useState<GameSettings>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+      const saved = safeStorage.getItem(STORAGE_KEYS.SETTINGS);
       if (saved) return { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
     } catch {
       // fallback
@@ -71,7 +72,7 @@ export default function App() {
   // Call History
   const [history, setHistory] = useState<CallHistoryItem[]>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.HISTORY);
+      const saved = safeStorage.getItem(STORAGE_KEYS.HISTORY);
       if (saved) return JSON.parse(saved);
     } catch {
       // fallback
@@ -82,7 +83,7 @@ export default function App() {
   // No-repeat mode state
   const [noRepeat, setNoRepeat] = useState<boolean>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.NO_REPEAT);
+      const saved = safeStorage.getItem(STORAGE_KEYS.NO_REPEAT);
       if (saved !== null) return JSON.parse(saved);
     } catch {
       // fallback
@@ -93,7 +94,7 @@ export default function App() {
   // Called student IDs for current class
   const [calledStudentIds, setCalledStudentIds] = useState<Set<string>>(() => {
     try {
-      const saved = localStorage.getItem(`${STORAGE_KEYS.CALLED_IDS_PREFIX}${currentClassId}`);
+      const saved = safeStorage.getItem(`${STORAGE_KEYS.CALLED_IDS_PREFIX}${currentClassId}`);
       if (saved) return new Set(JSON.parse(saved));
     } catch {
       // fallback
@@ -104,7 +105,7 @@ export default function App() {
   // Current round number for current class
   const [currentRound, setCurrentRound] = useState<number>(() => {
     try {
-      const saved = localStorage.getItem(`${STORAGE_KEYS.ROUND_PREFIX}${currentClassId}`);
+      const saved = safeStorage.getItem(`${STORAGE_KEYS.ROUND_PREFIX}${currentClassId}`);
       if (saved) return JSON.parse(saved);
     } catch {
       // fallback
@@ -147,7 +148,7 @@ export default function App() {
   // Persist classes
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEYS.CLASSES, JSON.stringify(classes));
+      safeStorage.setItem(STORAGE_KEYS.CLASSES, JSON.stringify(classes));
     } catch {
       // fallback
     }
@@ -156,7 +157,7 @@ export default function App() {
   // Persist current class ID
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEYS.CURRENT_CLASS_ID, currentClassId);
+      safeStorage.setItem(STORAGE_KEYS.CURRENT_CLASS_ID, currentClassId);
     } catch {
       // fallback
     }
@@ -165,7 +166,7 @@ export default function App() {
   // Persist settings
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+      safeStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
     } catch {
       // fallback
     }
@@ -174,7 +175,7 @@ export default function App() {
   // Persist history
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
+      safeStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history));
     } catch {
       // fallback
     }
@@ -183,7 +184,7 @@ export default function App() {
   // Persist no-repeat
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEYS.NO_REPEAT, JSON.stringify(noRepeat));
+      safeStorage.setItem(STORAGE_KEYS.NO_REPEAT, JSON.stringify(noRepeat));
     } catch {
       // fallback
     }
@@ -192,7 +193,7 @@ export default function App() {
   // Persist called students when changed
   useEffect(() => {
     try {
-      localStorage.setItem(
+      safeStorage.setItem(
         `${STORAGE_KEYS.CALLED_IDS_PREFIX}${currentClass.id}`,
         JSON.stringify(Array.from(calledStudentIds))
       );
@@ -204,7 +205,7 @@ export default function App() {
   // Persist current round
   useEffect(() => {
     try {
-      localStorage.setItem(
+      safeStorage.setItem(
         `${STORAGE_KEYS.ROUND_PREFIX}${currentClass.id}`,
         JSON.stringify(currentRound)
       );
@@ -224,17 +225,19 @@ export default function App() {
 
     setCurrentClassId(newClassId);
     setSelectedStudent(null);
+    setSpinningStudent(null);
+    setCountdown(5.0);
     setDisplayName('SẴN SÀNG GỌI TÊN!');
 
     try {
-      const savedCalled = localStorage.getItem(`${STORAGE_KEYS.CALLED_IDS_PREFIX}${newClassId}`);
+      const savedCalled = safeStorage.getItem(`${STORAGE_KEYS.CALLED_IDS_PREFIX}${newClassId}`);
       if (savedCalled) {
         setCalledStudentIds(new Set(JSON.parse(savedCalled)));
       } else {
         setCalledStudentIds(new Set());
       }
 
-      const savedRound = localStorage.getItem(`${STORAGE_KEYS.ROUND_PREFIX}${newClassId}`);
+      const savedRound = safeStorage.getItem(`${STORAGE_KEYS.ROUND_PREFIX}${newClassId}`);
       if (savedRound) {
         setCurrentRound(JSON.parse(savedRound));
       } else {
@@ -477,29 +480,84 @@ export default function App() {
     setNoRepeat((prev) => !prev);
   };
 
-  // Listen to fullscreen changes
+  // Listen to fullscreen changes safely (supporting Safari/iOS WebKit vendor prefixes)
   useEffect(() => {
     const handleFsChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const doc = document as unknown as {
+        fullscreenElement?: Element;
+        webkitFullscreenElement?: Element;
+        mozFullScreenElement?: Element;
+      };
+      setIsFullscreen(!!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement));
     };
     document.addEventListener('fullscreenchange', handleFsChange);
-    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
   }, []);
 
-  // FULLSCREEN TOGGLE
+  // FULLSCREEN TOGGLE (Safe for iOS Safari and mobile WebViews)
   const handleToggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+    const doc = document as unknown as {
+      fullscreenElement?: Element;
+      webkitFullscreenElement?: Element;
+      exitFullscreen?: () => Promise<void>;
+      webkitExitFullscreen?: () => void;
+    };
+    const docEl = document.documentElement as unknown as {
+      requestFullscreen?: () => Promise<void>;
+      webkitRequestFullscreen?: () => void;
+    };
+
+    const isFs = !!(doc.fullscreenElement || doc.webkitFullscreenElement);
+
+    if (!isFs) {
+      if (typeof docEl.requestFullscreen === 'function') {
+        docEl.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+      } else if (typeof docEl.webkitRequestFullscreen === 'function') {
+        try {
+          docEl.webkitRequestFullscreen();
+          setIsFullscreen(true);
+        } catch {
+          // silently handle webkit fullscreen refusal
+        }
+      }
     } else {
-      document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+      if (typeof doc.exitFullscreen === 'function') {
+        doc.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
+      } else if (typeof doc.webkitExitFullscreen === 'function') {
+        try {
+          doc.webkitExitFullscreen();
+          setIsFullscreen(false);
+        } catch {
+          // silently handle webkit exit refusal
+        }
+      }
     }
   };
 
   // OPEN BOAT THEATER (Real Fullscreen Presentation)
   const handleOpenBoatTheater = () => {
     setIsBoatTheaterOpen(true);
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+    const doc = document as unknown as {
+      fullscreenElement?: Element;
+      webkitFullscreenElement?: Element;
+    };
+    const docEl = document.documentElement as unknown as {
+      requestFullscreen?: () => Promise<void>;
+      webkitRequestFullscreen?: () => void;
+    };
+    if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
+      if (typeof docEl.requestFullscreen === 'function') {
+        docEl.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
+      } else if (typeof docEl.webkitRequestFullscreen === 'function') {
+        try {
+          docEl.webkitRequestFullscreen();
+          setIsFullscreen(true);
+        } catch {}
+      }
     }
   };
 
@@ -543,7 +601,7 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen max-h-screen w-screen bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-amber-400 selection:text-slate-950 font-sans relative overflow-hidden">
+    <div className="min-h-screen min-h-[100dvh] w-full bg-slate-950 text-slate-100 flex flex-col justify-between selection:bg-amber-400 selection:text-slate-950 font-sans relative overflow-x-hidden overflow-y-auto lg:overflow-hidden">
       {/* Atmospheric blurred ambient background using the 41-student artwork */}
       <div
         className="fixed inset-0 bg-cover bg-center opacity-20 filter blur-xl pointer-events-none -z-10 transform scale-105"
@@ -567,10 +625,10 @@ export default function App() {
         calledCount={calledStudentIds.size}
       />
 
-      {/* Main Game Stage: Image occupies 100% width, ~70% height; Controls occupy ~30% height */}
-      <main className="flex-1 min-h-0 w-full px-1.5 sm:px-3 py-1 flex flex-col justify-between gap-1.5 overflow-hidden">
-        {/* 1. KHU VỰC HÌNH ẢNH (70% CHIỀU CAO - 100% CHIỀU RỘNG): PHÓNG TO TOÀN CẢNH CON THUYỀN 41 HỌC SINH */}
-        <div className="flex-[2.1] min-h-0 w-full relative overflow-hidden flex items-center justify-center">
+      {/* Main Game Stage: Image occupies 100% width, ~70% height on desktop; fully responsive 16:9 on mobile */}
+      <main className="flex-1 w-full px-2 sm:px-4 py-1.5 sm:py-2 flex flex-col justify-start lg:justify-between gap-2 sm:gap-2.5 lg:overflow-hidden max-w-7xl mx-auto">
+        {/* 1. KHU VỰC HÌNH ẢNH: TỶ LỆ 16:9 CHUẨN XÁC, TỰ ĐỘNG THU PHÓNG KHÔNG MÉO NHÂN VẬT */}
+        <div className="w-full shrink-0 aspect-[16/9] max-h-[38vh] sm:max-h-[46vh] lg:max-h-none lg:flex-[2.1] lg:min-h-0 relative flex items-center justify-center">
           <KnowledgeBoatScene
             students={currentClass.students}
             selectedStudent={selectedStudent}
@@ -584,9 +642,9 @@ export default function App() {
           />
         </div>
 
-        {/* 2. KHU VỰC PHÍA DƯỚI (30% CHIỀU CAO): BẢNG GỌI TÊN BÊN TRÁI + BẢNG THỐNG KÊ BÊN PHẢI */}
-        <div className="flex-1 min-h-0 w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-3 items-stretch">
-          {/* Cột trái (8/12): Bảng gọi tên + Các nút điều khiển ngay dưới bảng gọi tên */}
+        {/* 2. KHU VỰC ĐIỀU KHIỂN & BẢNG VÀNG: THUẬN TIỆN THAO TÁC CẢ TRÊN ĐIỆN THOẠI & MÁY TÍNH */}
+        <div className="flex-1 w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-3 items-stretch lg:min-h-0">
+          {/* Cột trái: Bảng gọi tên + Các nút điều khiển ngay dưới bảng gọi tên */}
           <div className={`${isProjectorMode ? 'lg:col-span-12' : 'lg:col-span-8'} flex flex-col justify-between min-h-0`}>
             <CallBoard
               displayName={displayName}
@@ -606,7 +664,7 @@ export default function App() {
             />
           </div>
 
-          {/* Cột phải (4/12): Bảng thống kê */}
+          {/* Cột phải: Bảng thống kê */}
           {!isProjectorMode && (
             <div className="lg:col-span-4 flex flex-col justify-between min-h-0">
               <StatsPanel
@@ -635,6 +693,11 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* FOOTER BẢN QUYỀN: Bản quyền: Trầm Thanh Tuấn - GV trường THCS và THPT Long Hiệp */}
+      <footer className="text-center py-1.5 px-3 text-[11px] sm:text-xs text-amber-200/80 font-medium select-none border-t border-amber-400/25 bg-slate-950/80 backdrop-blur-sm shrink-0">
+        Bản quyền: Trầm Thanh Tuấn - GV trường THCS và THPT Long Hiệp
+      </footer>
 
       {/* Modals */}
       <ClassManageModal

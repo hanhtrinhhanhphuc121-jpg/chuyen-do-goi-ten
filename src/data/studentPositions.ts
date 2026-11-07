@@ -1,4 +1,5 @@
 import { StudentPosition } from '../types/game';
+import { safeStorage } from '../utils/storage';
 
 export const STORAGE_KEY_POSITIONS = 'chuyen_do_student_positions_lh_12_2_v4';
 
@@ -65,26 +66,26 @@ export const DEFAULT_STUDENT_POSITIONS: Record<string, StudentPosition> = {
  */
 export function getStoredStudentPositions(): Record<string, StudentPosition> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY_POSITIONS);
+    const raw = safeStorage.getItem(STORAGE_KEY_POSITIONS);
     if (raw) {
       const parsed = JSON.parse(raw);
       // Merge with defaults so any missing students are still covered
       return { ...DEFAULT_STUDENT_POSITIONS, ...parsed };
     }
   } catch (err) {
-    console.warn('Could not read student positions from localStorage', err);
+    console.warn('Could not read student positions from safeStorage', err);
   }
   return DEFAULT_STUDENT_POSITIONS;
 }
 
 /**
- * Persist student positions to localStorage
+ * Persist student positions to storage
  */
 export function saveStoredStudentPositions(positions: Record<string, StudentPosition>): void {
   try {
-    localStorage.setItem(STORAGE_KEY_POSITIONS, JSON.stringify(positions));
+    safeStorage.setItem(STORAGE_KEY_POSITIONS, JSON.stringify(positions));
   } catch (err) {
-    console.warn('Could not save student positions to localStorage', err);
+    console.warn('Could not save student positions to safeStorage', err);
   }
 }
 
@@ -93,7 +94,7 @@ export function saveStoredStudentPositions(positions: Record<string, StudentPosi
  */
 export function resetStoredStudentPositions(): Record<string, StudentPosition> {
   try {
-    localStorage.removeItem(STORAGE_KEY_POSITIONS);
+    safeStorage.removeItem(STORAGE_KEY_POSITIONS);
   } catch (err) {
     console.warn('Could not reset student positions', err);
   }

@@ -1,20 +1,106 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
     <title>Chuyến Đò Gọi Tên - Vòng Quay Học Sinh</title>
-    <meta name="description" content="Trò chơi giáo dục Chuyến Đò Tri Thức Việt Nam - Gọi tên học sinh ngẫu nhiên, không lặp, giao diện 3D sinh động cho lớp học THPT và máy chiếu." />
+    <meta name="description" content="Trò chơi giáo dục Chuyến Đò Tri Thức Việt Nam - Gọi tên học sinh ngẫu nhiên, không lặp, giao diện sinh động cho lớp học và điện thoại." />
     <meta property="og:title" content="Chuyến Đò Gọi Tên - Vòng Quay Học Sinh" />
-    <meta property="og:description" content="Trò chơi giáo dục Chuyến Đò Tri Thức Việt Nam - Gọi tên học sinh ngẫu nhiên, không lặp, giao diện 3D sinh động cho lớp học THPT và máy chiếu." />
+    <meta property="og:description" content="Trò chơi giáo dục Chuyến Đò Tri Thức Việt Nam - Gọi tên học sinh ngẫu nhiên, không lặp, giao diện sinh động cho lớp học và điện thoại." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Trailing slash normalizer for relative asset paths in in-app WebViews (Zalo/Messenger/Safari) -->
+    <script>
+      (function() {
+        try {
+          var p = window.location.pathname;
+          if (p && !p.endsWith('/') && !p.split('/').pop().includes('.')) {
+            window.location.replace(p + '/' + window.location.search + window.location.hash);
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Global Early Error Handler: prevents blank blue screen on script load failures -->
+    <script>
+      window.addEventListener('error', function(e) {
+        try {
+          var root = document.getElementById('root');
+          if (root && !root.dataset.mounted) {
+            var errEl = document.getElementById('app-early-error');
+            var errMsg = document.getElementById('app-early-error-msg');
+            if (errEl && errMsg) {
+              errEl.style.display = 'block';
+              var targetSrc = e && e.target && (e.target.src || e.target.href);
+              errMsg.textContent = targetSrc ? ('Không thể tải tài nguyên: ' + targetSrc) : (e.message || 'Lỗi khởi chạy JavaScript trên trình duyệt');
+            }
+          }
+        } catch (err) {}
+      }, true);
+    </script>
   </head>
-  <body>
-    <div id="root"></div>
+  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-amber-400 selection:text-slate-950">
+    <div id="root">
+      <!-- High-fidelity pre-loader & recovery container before React mounts -->
+      <div id="app-preloader" style="min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle at center, #0f2b48 0%, #071727 100%); color: #f8fafc; font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif; padding: 20px; text-align: center;">
+        <div style="max-width: 380px; width: 100%; background: rgba(15, 23, 42, 0.85); border: 2px solid #f59e0b; border-radius: 20px; padding: 24px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
+          <div style="font-size: 42px; margin-bottom: 12px; filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.5));">🛶</div>
+          <h1 style="font-size: 20px; font-weight: 900; color: #fbbf24; margin: 0 0 6px 0; letter-spacing: 0.5px;">CHUYẾN ĐÒ GỌI TÊN</h1>
+          <p style="font-size: 13px; color: #94a3b8; margin: 0 0 18px 0; font-weight: 500;">Chuyến Đò Tri Thức - Lớp 12.2</p>
+
+          <div id="app-loading-spinner" style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <div style="width: 36px; height: 36px; border: 3px solid rgba(245, 158, 11, 0.25); border-top-color: #fbbf24; border-radius: 50%; animation: preloaderSpin 0.9s linear infinite;"></div>
+            <p style="font-size: 13px; color: #cbd5e1; margin: 0;">Đang khởi động trò chơi...</p>
+          </div>
+
+          <!-- Early Error Box (hidden by default) -->
+          <div id="app-early-error" style="display: none; margin-top: 14px; background: rgba(153, 27, 27, 0.4); border: 1px solid #ef4444; border-radius: 12px; padding: 12px; text-align: left;">
+            <p style="font-size: 12px; font-weight: 700; color: #fca5a5; margin: 0 0 4px 0;">Phát hiện sự cố khởi động:</p>
+            <p id="app-early-error-msg" style="font-size: 11px; font-family: monospace; color: #fee2e2; margin: 0 0 10px 0; word-break: break-all;"></p>
+            <button onclick="window.location.reload()" style="width: 100%; padding: 8px 12px; background: #10b981; border: none; border-radius: 8px; color: #ffffff; font-weight: 700; font-size: 12px; cursor: pointer;">
+              Tải lại trang
+            </button>
+          </div>
+
+          <!-- Delayed fallback for slow or stalled network -->
+          <div id="app-slow-notice" style="display: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(245, 158, 11, 0.2);">
+            <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 10px;">Nếu trang tải lâu hơn bình thường:</p>
+            <div style="display: flex; gap: 8px; justify-content: center;">
+              <button onclick="window.location.reload()" style="padding: 7px 14px; background: #059669; border: none; border-radius: 8px; color: #ffffff; font-weight: 700; font-size: 12px; cursor: pointer;">
+                Tải lại trang
+              </button>
+              <button onclick="try{localStorage.clear();}catch(e){} window.location.reload();" style="padding: 7px 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #e2e8f0; font-weight: 600; font-size: 12px; cursor: pointer;">
+                Xóa đệm & Tải lại
+              </button>
+            </div>
+          </div>
+
+          <p style="margin-top: 18px; font-size: 11px; color: #64748b; margin-bottom: 0;">
+            Bản quyền: Trầm Thanh Tuấn - GV trường THCS và THPT Long Hiệp
+          </p>
+        </div>
+      </div>
+      <style>
+        @keyframes preloaderSpin {
+          to { transform: rotate(360deg); }
+        }
+      </style>
+      <script>
+        setTimeout(function() {
+          var slowEl = document.getElementById('app-slow-notice');
+          if (slowEl && document.getElementById('root') && !document.getElementById('root').dataset.mounted) {
+            slowEl.style.display = 'block';
+          }
+        }, 3500);
+      </script>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -46,36 +46,55 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onOpenPositionModal,
   calledCount,
 }) => {
+  const canFullscreen =
+    typeof document !== 'undefined' &&
+    !!(
+      document.fullscreenEnabled ||
+      (document as unknown as { webkitFullscreenEnabled?: boolean }).webkitFullscreenEnabled
+    );
+
   return (
-    <header className="relative z-30 w-full px-3 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-sky-950/85 via-emerald-950/80 to-sky-950/85 backdrop-blur-md border-b border-amber-400/30 text-white shadow-xl">
-      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+    <header className="relative z-30 w-full px-2.5 py-1.5 sm:px-6 sm:py-2.5 bg-gradient-to-r from-sky-950/90 via-emerald-950/85 to-sky-950/90 backdrop-blur-md border-b border-amber-400/30 text-white shadow-xl shrink-0">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
         {/* Left: Branding & Title */}
-        <div className="flex items-center space-x-3">
-          <div className="relative w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 p-0.5 shadow-lg shadow-amber-500/30 flex items-center justify-center">
-            <div className="w-full h-full rounded-[14px] bg-sky-950 flex items-center justify-center overflow-hidden">
-              <span className="text-2xl" role="img" aria-label="boat">🛶</span>
+        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+          <div className="relative w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 p-0.5 shadow-lg shadow-amber-500/30 flex items-center justify-center shrink-0">
+            <div className="w-full h-full rounded-[10px] sm:rounded-[14px] bg-sky-950 flex items-center justify-center overflow-hidden">
+              <span className="text-xl sm:text-2xl" role="img" aria-label="boat">🛶</span>
             </div>
-            <div className="absolute -bottom-1 -right-1 bg-red-600 text-[10px] font-bold px-1.5 py-0.2 rounded-full border border-amber-300 shadow">
+            <div className="absolute -bottom-1 -right-1 bg-red-600 text-[9px] font-bold px-1 py-0.2 rounded-full border border-amber-300 shadow">
               VN
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <h1 className="text-base sm:text-2xl md:text-3xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] truncate">
                 CHUYẾN ĐÒ GỌI TÊN
               </h1>
+              {/* Mobile compact class pill */}
+              <button
+                onClick={() => {
+                  soundEffects.playClick();
+                  onOpenClassManage();
+                }}
+                className="md:hidden px-2 py-0.5 text-[10px] font-black bg-amber-500/25 text-amber-200 border border-amber-400/50 rounded-md active:scale-95 flex items-center gap-1 shrink-0"
+                title="Quản lý lớp học và danh sách học sinh"
+              >
+                <Users className="w-3 h-3 text-amber-300" />
+                <span>{currentClass.name}</span>
+              </button>
             </div>
-            <p className="text-[11px] sm:text-xs font-medium text-emerald-200/90 flex items-center gap-1.5">
-              <span>TRÒ CHƠI GỌI TÊN HỌC SINH NGẪU NHIÊN</span>
-              <span className="hidden md:inline text-amber-300/70">• Chuyến Đò Tri Thức</span>
+            <p className="text-[10px] sm:text-xs font-medium text-emerald-200/90 truncate flex items-center gap-1.5">
+              <span>TRÒ CHƠI GỌI TÊN HỌC SINH</span>
+              <span className="hidden sm:inline text-amber-300/70">• Chuyến Đò Tri Thức</span>
             </p>
           </div>
         </div>
 
-        {/* Center: School & Class info badge */}
+        {/* Center: School & Class info badge (Desktop & Tablet) */}
         {!isProjectorMode && (
-          <div className="flex items-center bg-white/10 hover:bg-white/15 transition-all border border-amber-300/30 rounded-2xl px-3 py-1.5 shadow-inner backdrop-blur-sm">
+          <div className="hidden md:flex items-center bg-white/10 hover:bg-white/15 transition-all border border-amber-300/30 rounded-2xl px-3 py-1.5 shadow-inner backdrop-blur-sm shrink-0">
             <div className="flex items-center space-x-2.5 text-xs sm:text-sm">
               <div className="w-8 h-8 rounded-xl bg-emerald-500/30 border border-emerald-400/40 flex items-center justify-center text-emerald-300 shrink-0">
                 <GraduationCap className="w-4 h-4" />
@@ -114,13 +133,13 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               title="Quản lý lớp học và danh sách học sinh"
             >
               <Users className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Quản lý lớp</span>
+              <span className="hidden lg:inline">Quản lý lớp</span>
             </button>
           </div>
         )}
 
         {/* Right: Quick action toolbar */}
-        <div className="flex items-center space-x-1.5 sm:space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-1.5 shrink-0">
           {/* Nút TRÌNH CHIẾU CON THUYỀN (Toàn Màn Hình Máy Chiếu) */}
           <button
             onClick={() => {
@@ -197,17 +216,19 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             <Presentation className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {/* Fullscreen */}
-          <button
-            onClick={() => {
-              soundEffects.playClick();
-              onToggleFullscreen();
-            }}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white transition active:scale-95 cursor-pointer hidden sm:block"
-            title={isFullscreen ? 'Thu nhỏ' : 'Toàn màn hình máy chiếu'}
-          >
-            {isFullscreen ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
-          </button>
+          {/* Fullscreen (only show when supported by browser/device) */}
+          {canFullscreen && (
+            <button
+              onClick={() => {
+                soundEffects.playClick();
+                onToggleFullscreen();
+              }}
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white transition active:scale-95 cursor-pointer hidden sm:block"
+              title={isFullscreen ? 'Thu nhỏ' : 'Toàn màn hình máy chiếu'}
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" /> : <Maximize2 className="w-4 h-4 sm:w-5 sm:h-5" />}
+            </button>
+          )}
 
           {/* Settings */}
           <button

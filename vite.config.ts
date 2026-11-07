@@ -5,12 +5,17 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(({ command }) => {
   return {
-    base: process.env.BASE_URL || (command === 'build' ? '/chuyen-do-goi-ten/' : '/'),
+    base: process.env.BASE_URL || './',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
         '@': path.resolve(import.meta.dirname || '.', '.'),
       },
+    },
+    build: {
+      target: ['es2020', 'safari14', 'chrome80', 'firefox80'],
+      cssTarget: 'safari14',
+      sourcemap: false,
     },
     server: {
       port: 3000,
