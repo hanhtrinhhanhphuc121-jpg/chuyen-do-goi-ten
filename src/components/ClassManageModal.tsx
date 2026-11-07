@@ -12,6 +12,7 @@ import {
   FileSpreadsheet,
   AlertCircle,
   Save,
+  UserPlus,
 } from 'lucide-react';
 import { ClassRoom, Student } from '../types/game';
 import { Sprite } from './Sprite';
@@ -26,6 +27,7 @@ interface ClassManageModalProps {
   onCreateClass: (newClass: ClassRoom) => void;
   onDeleteClass: (classId: string) => void;
   onImportBackup: (importedClasses: ClassRoom[]) => void;
+  onOpenUpdateStudentList?: () => void;
 }
 
 export const ClassManageModal: React.FC<ClassManageModalProps> = ({
@@ -38,6 +40,7 @@ export const ClassManageModal: React.FC<ClassManageModalProps> = ({
   onCreateClass,
   onDeleteClass,
   onImportBackup,
+  onOpenUpdateStudentList,
 }) => {
   const currentClass = classes.find((c) => c.id === currentClassId) || classes[0];
 
@@ -54,6 +57,7 @@ export const ClassManageModal: React.FC<ClassManageModalProps> = ({
   // Bulk import mode
   const [showBulkImport, setShowBulkImport] = useState(false);
   const [bulkText, setBulkText] = useState('');
+  const [bulkReplace, setBulkReplace] = useState(false);
 
   // Editing student inline
   const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
@@ -155,7 +159,7 @@ export const ClassManageModal: React.FC<ClassManageModalProps> = ({
 
     onUpdateClass({
       ...currentClass,
-      students: [...currentClass.students, ...importedStudents],
+      students: bulkReplace ? importedStudents : [...currentClass.students, ...importedStudents],
     });
 
     setBulkText('');
@@ -388,21 +392,37 @@ export const ClassManageModal: React.FC<ClassManageModalProps> = ({
               </button>
             </form>
 
-            {/* Quick Bulk Import Button */}
+            {/* Quick Actions: Open Full Updater or Quick Drawer */}
             <div className="flex items-center gap-2">
+              {onOpenUpdateStudentList && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenUpdateStudentList();
+                  }}
+                  className="px-3 py-2 text-xs font-bold rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white border border-emerald-400/40 shadow transition flex items-center gap-1.5 cursor-pointer"
+                  title="Mở cửa sổ Cập nhật danh sách học sinh mới toàn diện"
+                >
+                  <UserPlus className="w-3.5 h-3.5" />
+                  <span>Cập nhật danh sách HS mới</span>
+                </button>
+              )}
+
               <button
+                type="button"
                 onClick={() => setShowBulkImport(!showBulkImport)}
                 className="px-3 py-2 text-xs font-bold rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/30 transition flex items-center gap-1.5 cursor-pointer"
               >
                 <FileSpreadsheet className="w-4 h-4" />
-                <span>Nhập nhanh từ Excel/Word</span>
+                <span>Dán nhanh text</span>
               </button>
             </div>
           </div>
 
           {/* Bulk Import Drawer */}
           {showBulkImport && (
-            <div className="bg-slate-900 p-4 rounded-2xl border border-amber-400/40 space-y-2 animate-fadeIn">
+            <div className="bg-slate-900 p-4 rounded-2xl border border-amber-400/40 space-y-3 animate-fadeIn">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-amber-300">
                   Dán danh sách học sinh (mỗi học sinh một dòng):
@@ -418,19 +438,45 @@ export const ClassManageModal: React.FC<ClassManageModalProps> = ({
                 placeholder="1. Nguyễn Văn An&#10;2. Trần Thị Bích&#10;3. Lê Hoàng Nam&#10;..."
                 className="w-full p-2.5 text-xs bg-slate-950 border border-slate-700 rounded-xl text-white font-mono placeholder-slate-600 focus:outline-none focus:border-amber-400"
               />
-              <div className="flex justify-end gap-2">
-                <button
-                  onClick={() => setShowBulkImport(false)}
-                  className="px-3 py-1.5 text-xs rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700"
-                >
-                  Hủy
-                </button>
-                <button
-                  onClick={handleBulkImport}
-                  className="px-4 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:from-amber-400 hover:to-amber-500 transition shadow cursor-pointer"
-                >
-                  Thêm vào lớp
-                </button>
+
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-800">
+                <div className="flex items-center gap-3 text-xs">
+                  <label className="flex items-center gap-1.5 text-slate-300 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="bulkMode"
+                      checked={!bulkReplace}
+                      onChange={() => setBulkReplace(false)}
+                      className="text-amber-500"
+                    />
+                    <span>Thêm vào lớp</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 text-slate-300 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="bulkMode"
+                      checked={bulkReplace}
+                      onChange={() => setBulkReplace(true)}
+                      className="text-emerald-500"
+                    />
+                    <span className="text-emerald-300 font-semibold">Thay thế toàn bộ lớp</span>
+                  </label>
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => setShowBulkImport(false)}
+                    className="px-3 py-1.5 text-xs rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    onClick={handleBulkImport}
+                    className="px-4 py-1.5 text-xs font-bold rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:from-amber-400 hover:to-amber-500 transition shadow cursor-pointer"
+                  >
+                    {bulkReplace ? 'Thay thế danh sách' : 'Thêm vào lớp'}
+                  </button>
+                </div>
               </div>
             </div>
           )}

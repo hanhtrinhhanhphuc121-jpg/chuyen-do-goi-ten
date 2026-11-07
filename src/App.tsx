@@ -9,6 +9,7 @@ import { ClassManageModal } from './components/ClassManageModal';
 import { SettingsModal } from './components/SettingsModal';
 import { BoatTheaterMode } from './components/BoatTheaterMode';
 import { StudentPositionModal } from './components/StudentPositionModal';
+import { UpdateStudentListModal } from './components/UpdateStudentListModal';
 import { INITIAL_CLASSES, DEFAULT_SETTINGS } from './data/defaultData';
 import { ClassRoom, Student, CallHistoryItem, GameSettings, StudentPosition } from './types/game';
 import { soundEffects } from './utils/soundEffects';
@@ -122,6 +123,7 @@ export default function App() {
 
   // Modals state
   const [showClassModal, setShowClassModal] = useState(false);
+  const [showUpdateListModal, setShowUpdateListModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showPositionModal, setShowPositionModal] = useState(false);
@@ -584,6 +586,41 @@ export default function App() {
     }
   };
 
+  // UPDATE STUDENT LIST (Full replace or append)
+  const handleUpdateStudentList = (
+    classId: string,
+    newStudents: Student[],
+    replaceMode: boolean,
+    resetHistory: boolean
+  ) => {
+    setClasses((prev) =>
+      prev.map((c) => {
+        if (c.id !== classId) return c;
+        const updatedStudents = replaceMode
+          ? newStudents
+          : [...c.students, ...newStudents];
+        return {
+          ...c,
+          students: updatedStudents,
+        };
+      })
+    );
+
+    if (resetHistory) {
+      setCalledStudentIds(new Set());
+      setSelectedStudent(null);
+      setSpinningStudent(null);
+      setCountdown(5.0);
+      setDisplayName('SẴN SÀNG GỌI TÊN!');
+      setHistory([]);
+      try {
+        safeStorage.removeItem(STORAGE_KEYS.CALLED_IDS_PREFIX + classId);
+        safeStorage.setItem(STORAGE_KEYS.ROUND_PREFIX + classId, '1');
+      } catch {}
+      setCurrentRound(1);
+    }
+  };
+
   // CLEAR HISTORY
   const handleClearHistory = () => {
     setHistory([]);
@@ -618,6 +655,7 @@ export default function App() {
         isProjectorMode={isProjectorMode}
         onToggleProjectorMode={() => setIsProjectorMode((prev) => !prev)}
         onOpenClassManage={() => setShowClassModal(true)}
+        onOpenUpdateStudentList={() => setShowUpdateListModal(true)}
         onOpenHistory={() => setShowHistoryModal(true)}
         onOpenSettings={() => setShowSettingsModal(true)}
         onOpenBoatTheater={handleOpenBoatTheater}
@@ -710,6 +748,16 @@ export default function App() {
         onCreateClass={handleCreateClass}
         onDeleteClass={handleDeleteClass}
         onImportBackup={handleImportBackup}
+        onOpenUpdateStudentList={() => setShowUpdateListModal(true)}
+      />
+
+      <UpdateStudentListModal
+        isOpen={showUpdateListModal}
+        onClose={() => setShowUpdateListModal(false)}
+        classes={classes}
+        currentClassId={currentClass.id}
+        onSelectClass={handleSelectClass}
+        onUpdateStudentList={handleUpdateStudentList}
       />
 
       <HistoryModal

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Student, StudentPosition, StudentAnimationState } from '../../types/game';
 import { Student2DCharacter } from './Student2DCharacter';
+import { DEFAULT_STUDENT_POSITIONS } from '../../data/studentPositions';
 
 interface BoatStudentLayerProps {
   students: Student[];
@@ -53,9 +54,22 @@ export const BoatStudentLayer: React.FC<BoatStudentLayerProps> = ({
     }
   }, [selectedStudent, isSpinning]);
 
+  // Helper to resolve student position with fallback to standard boat slots
+  const getStudentPos = (student: Student | null | undefined): StudentPosition | null => {
+    if (!student) return null;
+    if (positions[student.id]) return positions[student.id];
+
+    // Fallback: map student by index in students array to one of the 41 predefined boat positions
+    const defaultKeys = Object.keys(DEFAULT_STUDENT_POSITIONS);
+    if (defaultKeys.length === 0) return null;
+    const idx = students.findIndex((s) => s.id === student.id);
+    const key = defaultKeys[(idx >= 0 ? idx : 0) % defaultKeys.length];
+    return positions[key] || DEFAULT_STUDENT_POSITIONS[key] || null;
+  };
+
   // Position of active student
-  const activeStudentPos = selectedStudent ? positions[selectedStudent.id] : null;
-  const spinningStudentPos = isSpinning && spinningStudent ? positions[spinningStudent.id] : null;
+  const activeStudentPos = getStudentPos(selectedStudent);
+  const spinningStudentPos = isSpinning ? getStudentPos(spinningStudent) : null;
 
   return (
     <div className="absolute inset-0 pointer-events-none z-20 overflow-visible select-none">

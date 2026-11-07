@@ -11,6 +11,7 @@ import {
   GraduationCap,
   Tv,
   Crosshair,
+  UserPlus,
 } from 'lucide-react';
 import { ClassRoom } from '../types/game';
 import { soundEffects } from '../utils/soundEffects';
@@ -24,6 +25,7 @@ interface HeaderBarProps {
   isProjectorMode: boolean;
   onToggleProjectorMode: () => void;
   onOpenClassManage: () => void;
+  onOpenUpdateStudentList: () => void;
   onOpenHistory: () => void;
   onOpenSettings: () => void;
   onOpenBoatTheater: () => void;
@@ -40,6 +42,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   isProjectorMode,
   onToggleProjectorMode,
   onOpenClassManage,
+  onOpenUpdateStudentList,
   onOpenHistory,
   onOpenSettings,
   onOpenBoatTheater,
@@ -83,6 +86,19 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
               >
                 <Users className="w-3 h-3 text-amber-300" />
                 <span>{currentClass.name}</span>
+              </button>
+
+              {/* Mobile compact update student list button */}
+              <button
+                onClick={() => {
+                  soundEffects.playClick();
+                  onOpenUpdateStudentList();
+                }}
+                className="md:hidden px-2 py-0.5 text-[10px] font-black bg-emerald-500/25 text-emerald-300 border border-emerald-400/50 rounded-md active:scale-95 flex items-center gap-1 shrink-0"
+                title="Cập nhật danh sách học sinh mới"
+              >
+                <UserPlus className="w-3 h-3 text-emerald-400" />
+                <span>Cập nhật HS</span>
               </button>
             </div>
             <p className="text-[10px] sm:text-xs font-medium text-emerald-200/90 truncate flex items-center gap-1.5">
@@ -134,6 +150,19 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             >
               <Users className="w-3.5 h-3.5" />
               <span className="hidden lg:inline">Quản lý lớp</span>
+            </button>
+
+            {/* Nút CẬP NHẬT DANH SÁCH HS MỚI */}
+            <button
+              onClick={() => {
+                soundEffects.playClick();
+                onOpenUpdateStudentList();
+              }}
+              className="ml-2 px-2.5 py-1 text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-lg shadow-sm transition active:scale-95 cursor-pointer flex items-center gap-1.5 border border-emerald-300"
+              title="Cập nhật danh sách học sinh mới từ Excel, Word, Google Sheets"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Cập nhật HS mới</span>
             </button>
           </div>
         )}

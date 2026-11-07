@@ -56,8 +56,14 @@ export const StudentPositionModal: React.FC<StudentPositionModalProps> = ({
   if (!isOpen) return null;
 
   const currentStudent = students.find((s) => s.id === selectedStudentId) || students[0];
-  const currentPos: StudentPosition = localPositions[selectedStudentId] ||
-    DEFAULT_STUDENT_POSITIONS[selectedStudentId] || { x: 50, y: 50, radius: 4.2 };
+  const defaultKeys = Object.keys(DEFAULT_STUDENT_POSITIONS);
+  const studentIdx = students.findIndex((s) => s.id === selectedStudentId);
+  const fallbackKey = defaultKeys[(studentIdx >= 0 ? studentIdx : 0) % (defaultKeys.length || 1)];
+
+  const currentPos: StudentPosition =
+    localPositions[selectedStudentId] ||
+    DEFAULT_STUDENT_POSITIONS[selectedStudentId] ||
+    DEFAULT_STUDENT_POSITIONS[fallbackKey] || { x: 50, y: 50, radius: 4.2 };
 
   // Filter students
   const filteredStudents = students.filter((s) => {
